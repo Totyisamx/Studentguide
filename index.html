@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Guide</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-logo" onclick="goHome()">
+    <i class="fas fa-graduation-cap nav-logo-icon"></i>
+    Student Guide
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home')">Home</button>
+    <button class="nav-link" onclick="showPage('universities')">Universities</button>
+    <button class="nav-link" onclick="showPage('ai')">AI Advisor</button>
+    <button class="nav-link" onclick="showPage('about')">About Us</button>
+    <button class="nav-link" onclick="showPage('contact')">Contact</button>
+  </div>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="nav-link" onclick="showPage('home');toggleMobile()">🏠 Home</button>
+  <button class="nav-link" onclick="showPage('universities');toggleMobile()">🎓 Universities</button>
+  <button class="nav-link" onclick="showPage('ai');toggleMobile()">🤖 AI Advisor</button>
+  <button class="nav-link" onclick="showPage('about');toggleMobile()">ℹ️ About Us</button>
+  <button class="nav-link" onclick="showPage('contact');toggleMobile()">📞 Contact</button>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- HOME PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="home" class="page active">
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-bg-pattern"></div>
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge"><i class="fas fa-star"></i> Kuwait's #1 University Guide</div>
+      <h1 class="hero-title">Find Your <span>Perfect</span><br>University in Kuwait</h1>
+      <p class="hero-subtitle">Discover universities, explore majors, and get AI-powered recommendations tailored to your grades, budget, and goals.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary" onclick="showPage('universities')"><i class="fas fa-search"></i> Explore Universities</button>
+        <button class="btn-secondary" onclick="showPage('ai')"><i class="fas fa-robot"></i> AI Advisor</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">12+</div><div class="stat-label">Universities</div></div>
+      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Majors</div></div>
+      <div class="stat"><div class="stat-num">AI</div><div class="stat-label">Powered</div></div>
+    </div>
+    <div class="scroll-indicator">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">Why Student Guide?</span>
+      <h2 class="section-title">Everything You Need to Decide</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">A free platform built by a student, for students — to make the best academic decision of your life.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-university"></i></div>
+        <div class="feature-title">All Kuwait Universities</div>
+        <div class="feature-desc">Browse every public and private university in Kuwait with detailed information on majors, fees, and requirements.</div>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-robot"></i></div>
+        <div class="feature-title">AI Advisor</div>
+        <div class="feature-desc">Our intelligent recommendation engine analyzes your grades, budget, and interests to suggest the best universities for you.</div>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-filter"></i></div>
+        <div class="feature-title">Smart Filtering</div>
+        <div class="feature-desc">Filter by budget, location, major, and university type to quickly narrow down your options.</div>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-bookmark"></i></div>
+        <div class="feature-title">Save Favorites</div>
+        <div class="feature-desc">Bookmark your favorite universities to compare them side by side and revisit them anytime.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /home -->
+
+
+<!-- ══════════════════════════════════════════ -->
+<!-- UNIVERSITIES PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="universities-page" class="page" style="padding-top:72px;">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-eyebrow">Explore</span>
+      <h2 class="section-title">Universities in Kuwait</h2>
+      <div class="divider"></div>
+      <p class="section-subtitle">Browse Kuwait's leading universities — public, private, and international.</p>
+    </div>
+
+    <!-- Search + Filter Button row -->
+    <div class="search-row">
+      <div class="search-bar-wrap">
+        <input class="search-input" id="uniSearch" type="text" placeholder="Search universities by name or major..." oninput="filterUniversities()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <button class="filter-toggle-btn" onclick="toggleFilterPanel()">
+        <i class="fas fa-sliders-h"></i> Filter
+        <span class="filter-count" id="filterCount">0</span>
+      </button>
+    </div>
+
+    <!-- Advanced Filter Panel -->
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-panel-header">
+        <div class="filter-panel-title"><i class="fas fa-sliders-h"></i> Advanced Filters</div>
+        <button class="filter-clear-btn" onclick="clearAllFilters()">Clear All</button>
+      </div>
+      <div class="filter-panel-body">
+
+        <!-- Col 1: Location -->
+        <div>
+          <div class="filter-group-label"><i class="fas fa-map-marker-alt"></i> Location</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Kuwait City')" data-group="loc" data-value="Kuwait City"><div class="filter-checkbox"></div>Kuwait City</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Mubarak Al-Abdullah')" data-group="loc" data-value="Mubarak Al-Abdullah"><div class="filter-checkbox"></div>Mubarak Al-Abdullah</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Al Ardiya')" data-group="loc" data-value="Al Ardiya"><div class="filter-checkbox"></div>Al Ardiya</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Mishref')" data-group="loc" data-value="Mishref"><div class="filter-checkbox"></div>Mishref</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Salmiya')" data-group="loc" data-value="Salmiya"><div class="filter-checkbox"></div>Salmiya</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Egaila')" data-group="loc" data-value="Egaila"><div class="filter-checkbox"></div>Egaila</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Sharq')" data-group="loc" data-value="Sharq"><div class="filter-checkbox"></div>Sharq</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Al Jahra')" data-group="loc" data-value="Al Jahra"><div class="filter-checkbox"></div>Al Jahra</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'loc','Multiple')" data-group="loc" data-value="Multiple"><div class="filter-checkbox"></div>Multiple Campuses</div>
+        </div>
+
+        <!-- Col 2: Accepted Nationalities -->
+        <div>
+          <div class="filter-group-label"><i class="fas fa-globe"></i> Accepted Nationalities</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'nat','Kuwaitis Only')" data-group="nat" data-value="Kuwaitis Only"><div class="filter-checkbox"></div>Kuwaitis Only</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'nat','All Nationalities')" data-group="nat" data-value="All Nationalities"><div class="filter-checkbox"></div>All Nationalities</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'nat','GCC Nationals')" data-group="nat" data-value="GCC Nationals"><div class="filter-checkbox"></div>GCC Nationals</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'nat','Arab Nationals')" data-group="nat" data-value="Arab Nationals"><div class="filter-checkbox"></div>Arab Nationals</div>
+          <div class="filter-group-label" style="margin-top:16px"><i class="fas fa-university"></i> University Type</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'type','public')" data-group="type" data-value="public"><div class="filter-checkbox"></div>Public</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'type','private')" data-group="type" data-value="private"><div class="filter-checkbox"></div>Private</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'type','international')" data-group="type" data-value="international"><div class="filter-checkbox"></div>International</div>
+        </div>
+
+        <!-- Col 3: Education Level + Language -->
+        <div>
+          <div class="filter-group-label"><i class="fas fa-graduation-cap"></i> Education Level</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'edu','Diploma')" data-group="edu" data-value="Diploma"><div class="filter-checkbox"></div>Diploma</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'edu','Bachelor')" data-group="edu" data-value="Bachelor"><div class="filter-checkbox"></div>Bachelor's Degree</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'edu','Master')" data-group="edu" data-value="Master"><div class="filter-checkbox"></div>Master's Degree</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'edu','Doctorate')" data-group="edu" data-value="Doctorate"><div class="filter-checkbox"></div>Doctorate / PhD</div>
+          <div class="filter-group-label" style="margin-top:16px"><i class="fas fa-language"></i> Language of Instruction</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'lang','English')" data-group="lang" data-value="English"><div class="filter-checkbox"></div>English</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'lang','Arabic')" data-group="lang" data-value="Arabic"><div class="filter-checkbox"></div>Arabic</div>
+          <div class="filter-option" onclick="toggleFilterOpt(this,'lang','Bilingual')" data-group="lang" data-value="Bilingual"><div class="filter-checkbox"></div>Bilingual</div>
+        </div>
+      </div>
+      <div class="filter-panel-footer">
+        <button class="filter-apply-btn" onclick="applyFilters()"><i class="fas fa-check"></i> Apply Filters</button>
+      </div>
+    </div>
+
+    <!-- Active filter chips -->
+    <div class="active-filters" id="activeFilters"></div>
+
+    <!-- Type quick filters -->
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All Universities</button>
+      <button class="filter-btn" onclick="setFilter('public',this)">Public</button>
+      <button class="filter-btn" onclick="setFilter('private',this)">Private</button>
+      <button class="filter-btn" onclick="setFilter('international',this)">International</button>
+    </div>
+
+    <div class="universities-grid" id="universitiesGrid"></div>
+    <div class="no-results" id="noResults" style="display:none;">
+      <i class="fas fa-search-minus"></i>
+      <p>No universities found. Try adjusting your filters or search.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- UNIVERSITY DETAIL PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="uni-detail" class="page" style="padding-top:72px;">
+  <div id="uniDetailContent"></div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- AI ADVISOR PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="ai-page" class="page">
+  <div class="ai-hero-strip">
+    <div class="ai-icon-large">🤖</div>
+    <h1>AI University Advisor</h1>
+    <p>Answer a few questions and our AI will recommend the best universities for you in Kuwait.</p>
+  </div>
+
+  <div class="ai-form-wrap">
+    <div class="ai-form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your High School GPA <span>*</span></label>
+          <select class="form-select" id="gpa">
+            <option value="">Select GPA range</option>
+            <option value="excellent">90–100% (Excellent)</option>
+            <option value="very_good">80–89% (Very Good)</option>
+            <option value="good">70–79% (Good)</option>
+            <option value="average">60–69% (Average)</option>
+            <option value="below">Below 60%</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Budget (KWD) <span>*</span></label>
+          <select class="form-select" id="budget">
+            <option value="">Select budget</option>
+            <option value="free">Government / Scholarship</option>
+            <option value="low">Under 3,000 KWD/year</option>
+            <option value="medium">3,000 – 6,000 KWD/year</option>
+            <option value="high">6,000 – 10,000 KWD/year</option>
+            <option value="very_high">Above 10,000 KWD/year</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Your Location in Kuwait</label>
+          <select class="form-select" id="location">
+            <option value="">Select area</option>
+            <option value="kuwait_city">Kuwait City</option>
+            <option value="hawally">Hawally</option>
+            <option value="farwaniya">Farwaniya</option>
+            <option value="ahmadi">Ahmadi</option>
+            <option value="jahra">Jahra</option>
+            <option value="mubarak">Mubarak Al-Kabeer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Do you have personal transportation?</label>
+          <select class="form-select" id="transport">
+            <option value="yes">Yes – I have a car</option>
+            <option value="no">No – I rely on public/uni transport</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What is your citizenship? <span>*</span></label>
+        <select class="form-select" id="citizenship">
+          <option value="">Select your citizenship</option>
+          <option value="kuwaiti">🇰🇼 Kuwaiti Citizen</option>
+          <option value="gcc">🌍 GCC Citizen (Saudi, UAE, Qatar, Bahrain, Oman)</option>
+          <option value="other">🌐 Other Country Citizen</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred Fields of Study <span>*</span></label>
+        <div class="checkbox-group" id="fieldsGroup">
+          <div class="checkbox-label" data-value="engineering" onclick="toggleCheck(this)"> Engineering</div>
+          <div class="checkbox-label" data-value="medicine" onclick="toggleCheck(this)"> Medicine &amp; Health</div>
+          <div class="checkbox-label" data-value="business" onclick="toggleCheck(this)"> Business &amp; Finance</div>
+          <div class="checkbox-label" data-value="cs" onclick="toggleCheck(this)"> Computer Science &amp; IT</div>
+          <div class="checkbox-label" data-value="law" onclick="toggleCheck(this)"> Law</div>
+          <div class="checkbox-label" data-value="arts" onclick="toggleCheck(this)"> Arts &amp; Humanities</div>
+          <div class="checkbox-label" data-value="science" onclick="toggleCheck(this)"> Natural Sciences</div>
+          <div class="checkbox-label" data-value="architecture" onclick="toggleCheck(this)"> Architecture &amp; Design</div>
+          <div class="checkbox-label" data-value="education" onclick="toggleCheck(this)"> Education</div>
+          <div class="checkbox-label" data-value="any" onclick="toggleCheck(this)"> Open to Any Field</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Anything else you'd like us to know?</label>
+        <textarea class="form-textarea" id="extraNote" rows="3" placeholder="E.g. I prefer English-taught programs, small class sizes, strong career services..."></textarea>
+      </div>
+      <button class="btn-analyze" id="analyzeBtn" onclick="runAIAdvisor()">
+        <i class="fas fa-robot"></i> Get My Recommendations
+      </button>
+    </div>
+  </div>
+
+  <div id="ai-results">
+    <div class="results-title" id="resultsTitle">🎓 Your Top Recommendations</div>
+    <div id="resultsBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ABOUT PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="about-page" class="page">
+  <div class="about-hero">
+    <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 50%, rgba(201,168,76,0.1) 0%, transparent 60%);"></div>
+    <div class="about-hero-title">About Student Guide</div>
+    <p class="about-hero-sub">A student project built with passion — to help Kuwait's graduates find their way.</p>
+  </div>
+  <div class="about-content">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>Why This Project Exists</h2>
+        <p>Choosing a university is one of the most important decisions a young person can make — yet many students feel lost, overwhelmed, or underinformed when the time comes.</p>
+        <p>Student Guide was created to solve that problem. Built as a graduation project by <strong>Abdulrahman Abu Dakar</strong>, this platform brings together all the information students need — from university overviews and major requirements to fees and AI-powered recommendations — in one clean, accessible place.</p>
+        <p>The goal is simple: empower every high school graduate with the knowledge to make a confident, informed decision about their academic future.</p>
+        <p>This website represents months of research, design, and development — and a deep belief that accessible information can change lives.</p>
+      </div>
+      <div class="creator-card">
+        <div class="creator-avatar">👨‍💻</div>
+        <div class="creator-name">Abdulrahman Abu Dakar</div>
+        <div class="creator-role">Web Developer & Creator</div>
+        <div class="creator-bio">A graduate of Arab Open University (Kuwait), Abdulrahman built Student Guide as his graduation project — combining his passion for technology, design, and helping others. He hopes this platform becomes a trusted resource for students across Kuwait.</div>
+        <div class="creator-uni"><i class="fas fa-university"></i> Arab Open University – Kuwait Branch</div>
+      </div>
+    </div>
+    <div class="mission-grid">
+      <div class="mission-card fade-in">
+        <div class="mission-icon">🎯</div>
+        <div class="mission-title">Our Mission</div>
+        <div class="mission-desc">To give every student in Kuwait clear, reliable information about universities, majors, and requirements — completely free.</div>
+      </div>
+      <div class="mission-card fade-in">
+        <div class="mission-icon">💡</div>
+        <div class="mission-title">Our Vision</div>
+        <div class="mission-desc">A Kuwait where no student makes a university decision based on incomplete information or word of mouth alone.</div>
+      </div>
+      <div class="mission-card fade-in">
+        <div class="mission-icon">🤝</div>
+        <div class="mission-title">Our Values</div>
+        <div class="mission-desc">Transparency, accuracy, and accessibility. Every piece of information is presented clearly and without bias.</div>
+      </div>
+      <div class="mission-card fade-in">
+        <div class="mission-icon">🚀</div>
+        <div class="mission-title">Future Plans</div>
+        <div class="mission-desc">Expanding to include scholarship databases and a community forum for students to connect.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CONTACT PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div id="contact-page" class="page">
+  <div class="contact-page-hero">
+    <h1>Get in Touch</h1>
+    <p>Have a suggestion, a correction, or just want to say hello? We'd love to hear from you.</p>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-info-card">
+      <div class="contact-info-title">Contact Information</div>
+      <div class="contact-info-item">
+        <div class="ci-icon"><i class="fas fa-user"></i></div>
+        <div><div class="ci-label">Creator</div><div class="ci-value">Abdulrahman Abu Dakar</div></div>
+      </div>
+      <div class="contact-info-item">
+        <div class="ci-icon"><i class="fas fa-university"></i></div>
+        <div><div class="ci-label">University</div><div class="ci-value">Arab Open University – Kuwait</div></div>
+      </div>
+      <div class="contact-info-item">
+        <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+        <div><div class="ci-label">Email</div><div class="ci-value">Businesstoty@gmail.com</div></div>
+      </div>
+      <div class="contact-info-item">
+        <div class="ci-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div><div class="ci-label">Location</div><div class="ci-value">Kuwait City, Kuwait</div></div>
+      </div>
+    </div>
+    <div class="contact-form-card">
+      <div class="contact-form-title">Send a Message</div>
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Mohammed Al-Rashid" id="contactName">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="your@email.com" id="contactEmail">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subject</label>
+        <select class="form-select" id="contactSubject">
+          <option>General Inquiry</option>
+          <option>Report a Correction</option>
+          <option>Suggest a University</option>
+          <option>Partnership / Collaboration</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" rows="4" placeholder="Your message here..." id="contactMsg"></textarea>
+      </div>
+      <button class="btn-send" onclick="sendContact()"><i class="fas fa-paper-plane"></i> Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-logo"><i class="fas fa-graduation-cap" style="color:var(--gold)"></i> Student Guide</div>
+        <div class="footer-brand-desc">Kuwait's free university guide — helping high school graduates choose the right path for their future. Built with ❤️ by Abdulrahman Abu Dakar.</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Navigation</div>
+        <a class="footer-link" onclick="showPage('home')">Home</a>
+        <a class="footer-link" onclick="showPage('universities')">Universities</a>
+        <a class="footer-link" onclick="showPage('ai')">AI Advisor</a>
+        <a class="footer-link" onclick="showPage('about')">About Us</a>
+        <a class="footer-link" onclick="showPage('contact')">Contact</a>
+      </div>
+      <div>
+        <div class="footer-col-title">Quick Links</div>
+        <a class="footer-link" onclick="showPage('universities')">Browse All Universities</a>
+        <a class="footer-link" onclick="showPage('ai')">Get AI Recommendation</a>
+        <a class="footer-link" onclick="showPage('about')">About the Creator</a>
+        <a class="footer-link" onclick="showPage('contact')">Send Feedback</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 <span>Student Guide Kuwait</span> — Created by Abdulrahman Abu Dakar, Arab Open University</div>
+    </div>
+  </div>
+</footer>
+    <script src="main.js"></script> 
+</body>
+</html>
