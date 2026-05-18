@@ -1,5 +1,4 @@
-</style>
-  :root {
+ :root {
     --navy: #0d1b2a;
     --gold: #c9a84c;
     --gold-light: #f0d58c;
@@ -580,4 +579,3 @@
   /* No results */
   .no-results { text-align: center; padding: 60px 0; color: var(--text-muted); }
   .no-results i { font-size: 3rem; margin-bottom: 16px; color: var(--mist); }
-</style>
