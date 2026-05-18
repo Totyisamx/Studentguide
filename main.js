@@ -1,4 +1,3 @@
-<script>
 // ── DATA ──────────────────────────────────────────────
 const universities = [
   {
@@ -1057,4 +1056,3 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   renderUniversities();
 });
-</script>
