@@ -1,5 +1,3 @@
-</script>
-// ── DATA ──────────────────────────────────────────────
 const universities = [
   {
     id: 'ku',
@@ -1057,4 +1055,3 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   renderUniversities();
 });
-</script>
