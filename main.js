@@ -37,8 +37,8 @@ const universities = [
     shortDesc: 'A leading distance-learning institution with flexible programs for working professionals and students seeking part-time study.',
     emoji: '🌐',
     color: '#8B0000',
-    location: 'Al Ardiya, Kuwait',
-    locationArea: 'Al Ardiya',
+    location: 'Rumaithiya, Kuwait',
+    locationArea: 'Rumaithiya',
     established: 2002,
     tags: ['Private', 'Distance Learning', 'English & Arabic'],
     language: 'Bilingual',
@@ -91,8 +91,8 @@ const universities = [
     shortDesc: 'A premium private university offering American-accredited programs in business, computing, and arts & sciences.',
     emoji: '⭐',
     color: '#004080',
-    location: 'Mubarak Al-Abdullah, Kuwait',
-    locationArea: 'Mubarak Al-Abdullah',
+    location: 'Hawally, Kuwait',
+    locationArea: 'Hawally',
     established: 2002,
     tags: ['Private', 'US Accredited', 'English'],
     language: 'English',
@@ -146,8 +146,8 @@ const universities = [
     shortDesc: 'An engineering-focused institution offering Australian-accredited programs and strong industry partnerships.',
     emoji: '🦘',
     color: '#006400',
-    location: 'Mubarak Al-Abdullah, Kuwait',
-    locationArea: 'Mubarak Al-Abdullah',
+    location: 'Mishref, Kuwait',
+    locationArea: 'Mishref',
     established: 2004,
     tags: ['International', 'Australian', 'English'],
     language: 'English',
@@ -173,8 +173,8 @@ const universities = [
     shortDesc: 'An Australian technical college offering hospitality, business, and computing programs with hands-on training.',
     emoji: '🏨',
     color: '#5B2C6F',
-    location: 'Kuwait City, Kuwait',
-    locationArea: 'Kuwait City',
+    location: 'Sharq, Kuwait',
+    locationArea: 'Sharq',
     established: 2003,
     tags: ['International', 'Vocational', 'English'],
     language: 'English',
@@ -199,8 +199,8 @@ const universities = [
     shortDesc: 'Dedicated postgraduate programs in MBA, finance, and computer science for working professionals.',
     emoji: '🎓',
     color: '#003366',
-    location: 'Mubarak Al-Abdullah, Kuwait',
-    locationArea: 'Mubarak Al-Abdullah',
+    location: 'Hawally, Kuwait',
+    locationArea: 'Hawally',
     established: 2009,
     tags: ['Private', 'Postgraduate', 'English'],
     language: 'English',
@@ -304,8 +304,8 @@ const universities = [
     shortDesc: 'A Canadian-affiliated college offering applied programs in health sciences, IT, and business.',
     emoji: '🍁',
     color: '#C41E3A',
-    location: 'Al Jahra, Kuwait',
-    locationArea: 'Al Jahra',
+    location: 'Salmiya, Kuwait',
+    locationArea: 'Salmiya',
     established: 2009,
     tags: ['International', 'Canadian', 'English'],
     language: 'English',
@@ -709,8 +709,8 @@ async function runAIAdvisor() {
 
 CRITICAL RULE: Only recommend universities that accept the student's nationality/citizenship. Kuwaiti-only universities must NOT be recommended to GCC or other country citizens.
 
-From the following list of real Kuwaiti universities (with their accepted nationalities), recommend exactly the TOP 3 best matches for this student:
-${universities.map(u => `- ${u.name} (${u.type}, accepts: ${(u.nationalities||[]).join(' / ')}, majors: ${u.majors.map(m=>m.name).slice(0,3).join(', ')})`).join('\n')}
+From the following list of real Kuwaiti universities (with their accepted nationalities and available majors), recommend exactly the TOP 3 best matches for this student. For each university, also recommend the single BEST MATCHING MAJOR from that university's list that fits the student's preferred fields, GPA, and budget:
+${universities.map(u => `- ${u.name} (${u.type}, accepts: ${(u.nationalities||[]).join(' / ')}, majors: ${u.majors.map(m=>`${m.name} [min GPA: ${m.gpa}, fee: ${m.fee}]`).join(' | ')})`).join('\n')}
 
 Respond ONLY with a valid JSON array (no markdown, no text outside JSON) with exactly 3 objects:
 [
@@ -718,6 +718,8 @@ Respond ONLY with a valid JSON array (no markdown, no text outside JSON) with ex
     "name": "Full university name exactly as listed",
     "match": 94,
     "reason": "2-3 sentences explaining specifically why this university suits this student based on their citizenship, GPA, budget, and field interests.",
+    "recommended_major": "Exact major name from the university's list above",
+    "major_reason": "1-2 sentences explaining specifically why this major is the best fit for this student's GPA, budget, and preferred fields.",
     "tags": ["tag1", "tag2", "tag3"]
   }
 ]
@@ -925,12 +927,60 @@ function localAIFallback(gpa, budget, fields, location, transport, citizenship) 
   // Sort descending by score
   scored.sort((a, b) => b.score - a.score);
 
-  return scored.slice(0, 3).map(({ u, score, reasonText, tags }) => ({
-    name: u.name,
-    match: score,
-    reason: reasonText,
-    tags,
-  }));
+  return scored.slice(0, 3).map(({ u, score, reasonText, tags }) => {
+
+    // ── Pick the best matching major for this university ───────
+    // Map each user field to keywords that match major names
+    const fieldKeywords = {
+      engineering:  ['engineering', 'engineer'],
+      medicine:     ['medicine', 'medical', 'nursing', 'health', 'pharmacy', 'dentistry'],
+      business:     ['business', 'finance', 'accounting', 'marketing', 'management', 'mba'],
+      cs:           ['computer', 'information technology', 'it', 'computing', 'software'],
+      law:          ['law', 'legal', 'llb'],
+      arts:         ['arts', 'humanities', 'english', 'literature', 'communication', 'media'],
+      science:      ['science', 'mathematics', 'physics', 'chemistry', 'biology'],
+      architecture: ['architecture', 'design', 'construction'],
+      education:    ['education', 'teacher', 'teaching', 'training'],
+      any:          [],
+    };
+
+    // Score each major against the user's chosen fields
+    const scoredMajors = u.majors.map(m => {
+      const mLower = m.name.toLowerCase();
+      let mScore = 0;
+      fields.forEach(f => {
+        const kws = fieldKeywords[f] || [];
+        if (kws.some(kw => mLower.includes(kw))) mScore += 10;
+      });
+      // Bonus: GPA compatibility (parse first number from gpa string like "75%+")
+      const gpaNum = parseInt(m.gpa);
+      if (!isNaN(gpaNum)) {
+        const studentGpaPct = { excellent: 95, very_good: 85, good: 75, average: 65, below: 55 };
+        if ((studentGpaPct[gpa] || 60) >= gpaNum) mScore += 5;
+      }
+      return { major: m, mScore };
+    });
+
+    scoredMajors.sort((a, b) => b.mScore - a.mScore);
+    const bestMajor = scoredMajors[0]?.major || u.majors[0];
+
+    // Build major reason
+    const fieldNames = fields
+      .filter(f => f !== 'any')
+      .map(f => f.replace('_', ' '))
+      .join(', ');
+    const majorReason = `${bestMajor.name} is the strongest match for your interest in ${fieldNames || 'your chosen field'}. ` +
+      `It requires a minimum GPA of ${bestMajor.gpa} and has a tuition of ${bestMajor.fee}, which aligns with your stated budget.`;
+
+    return {
+      name: u.name,
+      match: score,
+      reason: reasonText,
+      recommended_major: bestMajor.name,
+      major_reason: majorReason,
+      tags,
+    };
+  });
 }
 
 function renderAIResults(results) {
@@ -938,13 +988,26 @@ function renderAIResults(results) {
   body.innerHTML = results.map((r, i) => `
     <div class="result-card" style="animation-delay:${i*0.15}s">
       <div class="result-rank">${i + 1}</div>
+
       <div class="result-uni-name">${r.name}</div>
       <div class="result-match">
         <div class="match-bar-wrap"><div class="match-bar" style="width:${r.match}%"></div></div>
         <span class="match-label">${r.match}%</span>
       </div>
       <div class="result-why">${r.reason}</div>
-      <div class="result-tags">${(r.tags||[]).map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>
+
+      ${r.recommended_major ? `
+      <div style="margin-top:16px;padding:14px 16px;background:rgba(201,168,76,0.07);border:1.5px solid rgba(201,168,76,0.25);border-radius:12px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <i class="fas fa-graduation-cap" style="color:var(--gold);font-size:0.9rem;"></i>
+          <span style="font-size:0.78rem;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--gold);">Recommended Major</span>
+        </div>
+        <div style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:6px;">${r.recommended_major}</div>
+        <div style="font-size:0.88rem;color:var(--text-muted);line-height:1.65;">${r.major_reason}</div>
+      </div>
+      ` : ''}
+
+      <div class="result-tags" style="margin-top:14px;">${(r.tags||[]).map(t=>`<span class="result-tag">${t}</span>`).join('')}</div>
       <button class="btn-view" style="margin-top:16px;" onclick="showUniFromName('${r.name}')">
         View University <i class="fas fa-arrow-right" style="margin-left:4px;"></i>
       </button>
